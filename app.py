@@ -34,6 +34,7 @@ class AttendanceSystem:
         if user_id in self.users:
             print("User found. Checking password...")  # Debugging line
             if self.users[user_id].password == password:
+                print("Login successful.")  # Debugging line
                 return True, self.users[user_id]
             else:
                 print("Incorrect password.")  # Debugging line
