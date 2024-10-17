@@ -1,8 +1,9 @@
 import streamlit as st
 
 class User:
-    def __init__(self, name, role):
-        self.name = name
+    def __init__(self, user_id, password, role):
+        self.user_id = user_id
+        self.password = password
         self.role = role
         self.attendance_records = []
         self.leave_requests = []
@@ -10,40 +11,39 @@ class User:
 class AttendanceSystem:
     def __init__(self):
         self.users = {}
-    
-    def register_user(self, name, role):
-        if name in self.users:
-            return f"{name} is already registered."
-        else:
-            self.users[name] = User(name, role)
-            return f"{name} registered as {role}."
 
-    def mark_attendance(self, name, entry_time, exit_time):
-        if name in self.users:
-            record = {
-                "entry_time": entry_time,
-                "exit_time": exit_time,
-                "status": self.get_attendance_status(entry_time)
-            }
-            self.users[name].attendance_records.append(record)
-            return f"Attendance marked for {name}: {record}"
-        return f"{name} is not registered."
+    def register_user(self, user_id, password, role):
+        if user_id in self.users:
+            return "User already registered. Please log in."
+        else:
+            self.users[user_id] = User(user_id, password, role)
+            return f"{user_id} registered as {role}."
+
+    def login_user(self, user_id, password):
+        if user_id in self.users and self.users[user_id].password == password:
+            return True, self.users[user_id]
+        return False, None
+
+    def mark_attendance(self, user, entry_time, exit_time):
+        record = {
+            "entry_time": entry_time,
+            "exit_time": exit_time,
+            "status": self.get_attendance_status(entry_time)
+        }
+        user.attendance_records.append(record)
+        return f"Attendance marked for {user.user_id}: {record}"
 
     def get_attendance_status(self, entry_time):
         return "Late" if entry_time > "09:00" else "On Time"
 
-    def request_leave(self, name, reason):
-        if name in self.users:
-            self.users[name].leave_requests.append(reason)
-            return f"Leave requested by {name} for reason: {reason}"
-        return f"{name} is not registered."
+    def request_leave(self, user, reason):
+        user.leave_requests.append(reason)
+        return f"Leave requested by {user.user_id} for reason: {reason}"
 
-    def show_attendance(self):
-        attendance_info = ""
-        for name, user in self.users.items():
-            attendance_info += f"\nAttendance records for {name}:"
-            for record in user.attendance_records:
-                attendance_info += f"\nEntry: {record['entry_time']} - Exit: {record['exit_time']} - Status: {record['status']}"
+    def show_attendance(self, user):
+        attendance_info = f"\nAttendance records for {user.user_id}:"
+        for record in user.attendance_records:
+            attendance_info += f"\nEntry: {record['entry_time']} - Exit: {record['exit_time']} - Status: {record['status']}"
         return attendance_info
 
 attendance_system = AttendanceSystem()
@@ -51,26 +51,43 @@ attendance_system = AttendanceSystem()
 # Streamlit user interface
 st.title("Attendance Management System")
 
-role = st.selectbox("Select Role", ["Manager", "Employee"])
-name = st.text_input("Enter Name")
+menu = st.sidebar.selectbox("Menu", ["Register", "Login"])
 
-if st.button("Register"):
-    result = attendance_system.register_user(name, role)
-    st.success(result)
+if menu == "Register":
+    st.subheader("Register")
+    user_id = st.text_input("User ID")
+    password = st.text_input("Password", type="password")
+    role = st.selectbox("Select Role", ["Manager", "Employee"])
 
-entry_time = st.text_input("Entry Time (HH:MM)")
-exit_time = st.text_input("Exit Time (HH:MM)")
+    if st.button("Register"):
+        result = attendance_system.register_user(user_id, password, role)
+        st.success(result)
 
-if st.button("Mark Attendance"):
-    result = attendance_system.mark_attendance(name, entry_time, exit_time)
-    st.success(result)
+elif menu == "Login":
+    st.subheader("Login")
+    user_id = st.text_input("User ID")
+    password = st.text_input("Password", type="password")
 
-leave_reason = st.text_input("Leave Reason")
+    if st.button("Login"):
+        logged_in, current_user = attendance_system.login_user(user_id, password)
+        if logged_in:
+            st.success(f"Welcome {current_user.user_id}!")
 
-if st.button("Request Leave"):
-    result = attendance_system.request_leave(name, leave_reason)
-    st.success(result)
+            entry_time = st.text_input("Entry Time (HH:MM)")
+            exit_time = st.text_input("Exit Time (HH:MM)")
 
-if st.button("Show Attendance Records"):
-    records = attendance_system.show_attendance()
-    st.text_area("Attendance Records", records, height=300)
+            if st.button("Mark Attendance"):
+                result = attendance_system.mark_attendance(current_user, entry_time, exit_time)
+                st.success(result)
+
+            leave_reason = st.text_input("Leave Reason")
+
+            if st.button("Request Leave"):
+                result = attendance_system.request_leave(current_user, leave_reason)
+                st.success(result)
+
+            if st.button("Show Attendance Records"):
+                records = attendance_system.show_attendance(current_user)
+                st.text_area("Attendance Records", records, height=300)
+        else:
+            st.error("Invalid User ID or Password.")
