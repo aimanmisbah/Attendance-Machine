@@ -1,4 +1,5 @@
 import streamlit as st
+import re
 
 class User:
     def __init__(self, user_id, password, role):
@@ -12,7 +13,15 @@ class AttendanceSystem:
     def __init__(self):
         self.users = {}
 
+    def is_valid_user_id(self, user_id):
+        # Validate User ID: alphanumeric, periods, and underscores only
+        pattern = r'^[a-zA-Z0-9._]+$'
+        return re.match(pattern, user_id) is not None
+
     def register_user(self, user_id, password, role):
+        if not self.is_valid_user_id(user_id):
+            return "Invalid User ID. Only alphanumerical values, periods, and underscores are allowed."
+
         if user_id in self.users:
             return "User already registered. Please log in."
         else:
