@@ -23,7 +23,7 @@ class AttendanceSystem:
             return "Invalid User ID. Only alphanumerical values, periods, and underscores are allowed."
 
         if user_id in self.users:
-            return "User already registered. Please log in."
+            return "User ID already registered. Please log in with your credentials."
         else:
             self.users[user_id] = User(user_id, password, role)
             return f"{user_id} registered as {role}."
