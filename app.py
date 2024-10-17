@@ -29,6 +29,8 @@ class AttendanceSystem:
             return f"{user_id} registered as {role}."
 
     def login_user(self, user_id, password):
+        # Print registered users for debugging
+        print("Registered Users:", self.users.keys())  # Debugging line
         if user_id in self.users and self.users[user_id].password == password:
             return True, self.users[user_id]
         return False, None
