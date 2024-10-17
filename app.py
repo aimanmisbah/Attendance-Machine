@@ -69,24 +69,20 @@ attendance_system = AttendanceSystem()
 st.title("Attendance Management System")
 
 # Instructions for User ID and Password
-st.sidebar.header("Instructions")
-
-# User ID Requirements
-st.sidebar.subheader("User ID Requirements:")
-st.sidebar.markdown("""
+st.subheader("User ID Requirements:")
+st.markdown("""
 - Must be alphanumerical (letters and numbers).
 - Can include periods (.) and underscores (_).
 - Cannot include spaces or other special characters.
 """)
 
-# Password Requirements
-st.sidebar.subheader("Password Requirements:")
-st.sidebar.markdown("""
+st.subheader("Password Requirements:")
+st.markdown("""
 - Must include at least one special character (e.g., @, #, $, etc.).
 - Must be a combination of uppercase and lowercase letters.
 """)
 
-menu = st.sidebar.selectbox("Menu", ["Register", "Login"])
+menu = st.selectbox("Menu", ["Register", "Login"])
 
 if menu == "Register":
     st.subheader("Register")
