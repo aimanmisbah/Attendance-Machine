@@ -68,27 +68,29 @@ attendance_system = AttendanceSystem()
 # Streamlit user interface
 st.title("Attendance Management System")
 
-# Instructions for User ID and Password
-st.subheader("User ID Requirements:")
-st.markdown("""
-- Must be alphanumerical (letters and numbers).
-- Can include periods (.) and underscores (_).
-- Cannot include spaces or other special characters.
-""")
-
-st.subheader("Password Requirements:")
-st.markdown("""
-- Must include at least one special character (e.g., @, #, $, etc.).
-- Must be a combination of uppercase and lowercase letters.
-""")
-
-menu = st.selectbox("Menu", ["Register", "Login"])
+# Sidebar menu for navigation
+menu = st.sidebar.selectbox("Menu", ["Register", "Login"])
 
 if menu == "Register":
     st.subheader("Register")
     user_id = st.text_input("User ID")
     password = st.text_input("Password", type="password")
     role = st.selectbox("Select Role", ["Manager", "Employee"])
+
+    # Instructions for User ID
+    st.markdown("""
+    **User ID Requirements:**
+    - Must be alphanumerical (letters and numbers).
+    - Can include periods (.) and underscores (_).
+    - Cannot include spaces or other special characters.
+    """)
+
+    # Instructions for Password
+    st.markdown("""
+    **Password Requirements:**
+    - Must include at least one special character (e.g., @, #, $, etc.).
+    - Must be a combination of uppercase and lowercase letters.
+    """)
 
     if st.button("Register"):
         result = attendance_system.register_user(user_id, password, role)
@@ -98,6 +100,21 @@ elif menu == "Login":
     st.subheader("Login")
     user_id = st.text_input("User ID")
     password = st.text_input("Password", type="password")
+
+    # Instructions for User ID
+    st.markdown("""
+    **User ID Requirements:**
+    - Must be alphanumerical (letters and numbers).
+    - Can include periods (.) and underscores (_).
+    - Cannot include spaces or other special characters.
+    """)
+
+    # Instructions for Password
+    st.markdown("""
+    **Password Requirements:**
+    - Must include at least one special character (e.g., @, #, $, etc.).
+    - Must be a combination of uppercase and lowercase letters.
+    """)
 
     if st.button("Login"):
         logged_in, current_user = attendance_system.login_user(user_id, password)
