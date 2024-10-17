@@ -26,13 +26,19 @@ class AttendanceSystem:
             return "User ID already registered. Please log in with your credentials."
         else:
             self.users[user_id] = User(user_id, password, role)
+            print(f"Registered Users: {self.users.keys()}")  # Debugging line
             return f"{user_id} registered as {role}."
 
     def login_user(self, user_id, password):
-        # Print registered users for debugging
-        print("Registered Users:", self.users.keys())  # Debugging line
-        if user_id in self.users and self.users[user_id].password == password:
-            return True, self.users[user_id]
+        print("Trying to log in with User ID:", user_id)  # Debugging line
+        if user_id in self.users:
+            print("User found. Checking password...")  # Debugging line
+            if self.users[user_id].password == password:
+                return True, self.users[user_id]
+            else:
+                print("Incorrect password.")  # Debugging line
+        else:
+            print("User ID not found.")  # Debugging line
         return False, None
 
     def mark_attendance(self, user, entry_time, exit_time):
@@ -61,6 +67,19 @@ attendance_system = AttendanceSystem()
 
 # Streamlit user interface
 st.title("Attendance Management System")
+
+# Instructions for User ID and Password
+st.sidebar.header("Instructions")
+st.sidebar.markdown("""
+### User ID Requirements:
+- Must be alphanumerical (letters and numbers).
+- Can include periods (.) and underscores (_).
+- Cannot include spaces or other special characters.
+
+### Password Requirements:
+- Must include at least one special character (e.g., @, #, $, etc.).
+- Must be a combination of uppercase and lowercase letters.
+""")
 
 menu = st.sidebar.selectbox("Menu", ["Register", "Login"])
 
